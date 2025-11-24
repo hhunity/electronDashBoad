@@ -428,6 +428,7 @@ def select_run_id(n_clicks, _version, current_selected, selected_file):
 
     # クリック時の処理
     clicked_rid = None
+    triggered_value = ctx.triggered[0].get("value") if ctx.triggered else None
     if isinstance(triggered_id, dict):
         clicked_rid = triggered_id.get("runid")
     elif isinstance(triggered_id, str):
@@ -439,6 +440,8 @@ def select_run_id(n_clicks, _version, current_selected, selected_file):
             clicked_rid = None
 
     if clicked_rid:
+        if not triggered_value:
+            return dash.no_update, dash.no_update  # 無クリック(初期値)は無視
         if clicked_rid == current_selected:
             return None, None  # トグル解除
         return clicked_rid, run_times.get(clicked_rid)
@@ -553,4 +556,7 @@ def toggle_sidebar(n):
 # 実行エントリポイント
 # ======================================================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host="127.0.0.1",
+        port=8050,
+        debug=False)
