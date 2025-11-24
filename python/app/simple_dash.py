@@ -4,6 +4,7 @@ import dash  # Dash本体。Flask + React + Plotly をまとめたフレーム�
 from dash import html, dcc, Input, Output, State  # html: HTMLタグ, dcc: Dash Core Components, Input/Output/State: コールバックの入出力宣言
 import plotly.graph_objs as go
 from datetime import datetime
+import dash_bootstrap_components as dbc
 
 
 def build_fig(xs=None, ys=None, title=None):
@@ -57,143 +58,209 @@ def parse_time(value):
 # ----------------------------------------
 # Dash アプリ本体の生成
 # ----------------------------------------
-app = dash.Dash(__name__)
+ASSETS_PATH = os.path.join(os.path.dirname(__file__), "assets")
+# app = dash.Dash(__name__, assets_folder=ASSETS_PATH)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
+
+sidebar = html.Div(
+    [
+        dbc.Row(
+            [
+                ],
+            style={"height": "5vh"}, className='bg-primary text-white'
+            ),
+        dbc.Row(
+            [
+                ],
+            style={"height": "50vh"}, className='bg-secondary text-white'
+            ),
+        dbc.Row(
+            [
+                ],
+            style={"height": "45vh"}, className='bg-dark text-white'
+            )
+    ],
+)
+content = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.P('Distribution of Categorical Variable'),
+                        ],
+                    className='bg-white'
+                    ),
+                dbc.Col(
+                    [
+                        html.P('Distribution of Continuous Variable')
+                    ],
+                    className='bg-dark text-white'
+                    )
+            ],
+            style={"height": "50vh"}),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.P('Correlation Matrix Heatmap')
+                    ],
+                    className='bg-light'
+                    )
+            ],
+            style={"height": "50vh"}
+            )
+        ]
+    )
 
 # ======================================================
 # layout = 画面に「何をどう配置するか」を定義する部分
 # ======================================================
 app.layout = html.Div([
-    # dcc.Store: クライアントサイドの軽量ストレージ。ページリロードしない限り値を保持できる。
-    # ここでは選択中ファイル/ run_id/ そのrun_idの時刻/ ファイル更新バージョンを保存し、コールバック間で共有する。
-    dcc.Store(id="selected-file"),
-    dcc.Store(id="selected-run-id"),
-    dcc.Store(id="selected-run-id-time"),
-    dcc.Store(id="selected-file-version", data={"version": 0, "mtime": None}),
-    dcc.Store(id="sidebar-collapsed", data=False),
-    # dcc.Interval: 一定間隔でイベントを発火させるコンポーネント。自動更新用に利用。
-    dcc.Interval(id="auto-refresh-interval", interval=2000, disabled=True),
+        dbc.Row(
+            [
+                dbc.Col(sidebar, width=3, className='bg-light'),
+                dbc.Col(content, width=9)
+                ],
+            style={"height": "100vh"}
+            ),
+        ],
+    fluid=True
+)
 
-    # html.Div: HTMLのdiv要素。styleでCSS指定し、childrenで中に入れるコンポーネントを列挙する。
-    html.Div(
-        style={
-            "display": "flex",
-            "gap": "20px",
-            "backgroundColor": "#111",
-            "color": "#eee",
-            "minHeight": "100vh",
-            "padding": "16px",
-        },
-        children=[
-            # 左カラム: 入力とリスト類
-            html.Div(
-                id="sidebar",
-                style={
-                    "width": "19%",
-                    "minWidth": "180px",
-                    "backgroundColor": "#1a1a1a",
-                    "padding": "10px",
-                    "border": "1px solid #333",
-                    "borderRadius": "6px",
-                    "transition": "all 0.25s ease",
-                },
-                children=[
-                    html.Div(
-                        html.Button(
-                            "≡",
-                            id="toggle-sidebar",
-                            n_clicks=0,
+if 0:
+    app.layout = html.Div([
+        # dcc.Store: クライアントサイドの軽量ストレージ。ページリロードしない限り値を保持できる。
+        # ここでは選択中ファイル/ run_id/ そのrun_idの時刻/ ファイル更新バージョンを保存し、コールバック間で共有する。
+        dcc.Store(id="selected-file"),
+        dcc.Store(id="selected-run-id"),
+        dcc.Store(id="selected-run-id-time"),
+        dcc.Store(id="selected-file-version", data={"version": 0, "mtime": None}),
+        dcc.Store(id="sidebar-collapsed", data=False),
+        # dcc.Interval: 一定間隔でイベントを発火させるコンポーネント。自動更新用に利用。
+        dcc.Interval(id="auto-refresh-interval", interval=2000, disabled=True),
+
+        # html.Div: HTMLのdiv要素。styleでCSS指定し、childrenで中に入れるコンポーネントを列挙する。
+        html.Div(
+            style={
+                "display": "flex",
+                "gap": "0px",  # ペイン間の余白をなくす
+                "backgroundColor": "#111",
+                "color": "#eee",
+                "minHeight": "100vh",
+                "padding": "0px",
+            },
+            children=[
+                # 左カラム: 入力とリスト類
+                html.Div(
+                    id="sidebar",
+                    style={
+                        "width": "19%",
+                        "minWidth": "180px",
+                        "backgroundColor": "#1a1a1a",
+                        "padding": "10px",
+                        "border": "1px solid #333",
+                        "borderRadius": "6px",
+                        "transition": "all 0.25s ease",
+                    },
+                    children=[
+                        html.Div(
+                            html.Button(
+                                "≡",
+                                id="toggle-sidebar",
+                                n_clicks=0,
+                                style={
+                                    "padding": "4px 8px",
+                                    "cursor": "pointer",
+                                    "border": "1px solid #333",
+                                    "backgroundColor": "#222",
+                                    "color": "#eee",
+                                },
+                            ),
                             style={
-                                "padding": "4px 8px",
-                                "cursor": "pointer",
-                                "border": "1px solid #333",
-                                "backgroundColor": "#222",
-                                "color": "#eee",
+                                "display": "flex",
+                                "alignItems": "center",
+                                "justifyContent": "flex-end",
+                                "gap": "6px",
+                                "marginBottom": "8px",
                             },
                         ),
-                        style={
-                            "display": "flex",
-                            "alignItems": "center",
-                            "justifyContent": "flex-end",
-                            "gap": "6px",
-                            "marginBottom": "8px",
-                        },
-                    ),
-                    html.Div(
-                        id="sidebar-content",
-                        children=[
-                            html.H2("Graph View"),  # タイトル
-                            html.Div(
-                                html.Button("自動更新", id="auto-refresh", n_clicks=0),
-                                style={"marginBottom": "8px"},
-                            ),
-                            html.Div([
-                                # ログディレクトリの入力
-                                html.Div("log Path", style={"fontWeight": "bold", "marginTop": "10px"}),
-                                # dcc.Input: ユーザーがテキストを入力するフィールド（valueがコールバックの入力に使われる）
-                                dcc.Input(
-                                    id="text",
-                                    value="./python/logs",
-                                    type="text",
-                                    style={
-                                        "padding": "4px",
-                                        "border": "1px solid #444",
-                                        "marginBottom": "4px",
-                                        "fontSize": "16px",
-                                        "backgroundColor": "#222",
-                                        "color": "#eee",
-                                    },
+                        html.Div(
+                            id="sidebar-content",
+                            children=[
+                                html.H2("Graph View"),  # タイトル
+                                html.Div(
+                                    html.Button("自動更新", id="auto-refresh", n_clicks=0),
+                                    style={"marginBottom": "8px"},
                                 ),
-                            ]),
-                            html.Div([
-                                # .jsonl ファイルの一覧（mtime 降順）
-                                html.Div("file list", style={"fontWeight": "bold", "marginTop": "10px"}),
-                                # html.Div 内で動的に子要素を差し替える。子要素には id={"type":"jsonl-item",...} のDivを入れる。
-                                html.Div(id="file-list", style={"marginTop": "4px", "fontSize": "14px"}),
-                            ]),
-                            html.Div([
-                                # run_end から抽出した run_id 一覧（time 新しい順）
-                                html.Div("run id list", style={"fontWeight": "bold", "marginTop": "10px"}),
-                                html.Div(id="runid-list", style={"marginTop": "4px", "fontSize": "14px"}),
-                            ]),
-                        ],
-                    ),
-                ]
-            ),
-            # 右カラム: グラフ＋ファイル内容
-            html.Div(
-                style={
-                    "flex": "1",
-                    "backgroundColor": "#1a1a1a",
-                    "padding": "10px",
-                    "border": "1px solid #333",
-                    "borderRadius": "6px",
-                },
-                children=[
-                    # dcc.Graph: Plotly図を描画するコンポーネント。figureはPlotlyのFigureを渡す。
-                    dcc.Graph(
-                        id="detail-graph",
-                        style={"height": "340px", "margin": "0"},
-                        figure=build_fig(),
-                    ),
-                    # ファイル内容（run_id 選択時はフィルタリング）
-                    html.Div("ファイル内容", style={"fontWeight": "bold", "marginTop": "10px"}),
-                    dcc.Textarea(
-                        id="file-content",
-                        style={
-                            "width": "100%",
-                            "height": "300px",
-                            "whiteSpace": "pre",
-                            "backgroundColor": "#111",
-                            "color": "#eee",
-                            "border": "1px solid #333",
-                        },
-                        readOnly=True,
-                    ),
-                ]
-            ),
-        ]
-    )
-])
+                                html.Div([
+                                    # ログディレクトリの入力
+                                    html.Div("log Path", style={"fontWeight": "bold", "marginTop": "10px"}),
+                                    # dcc.Input: ユーザーがテキストを入力するフィールド（valueがコールバックの入力に使われる）
+                                    dcc.Input(
+                                        id="text",
+                                        value="./python/logs",
+                                        type="text",
+                                        style={
+                                            "padding": "4px",
+                                            "border": "1px solid #444",
+                                            "marginBottom": "4px",
+                                            "fontSize": "16px",
+                                            "backgroundColor": "#222",
+                                            "color": "#eee",
+                                        },
+                                    ),
+                                ]),
+                                html.Div([
+                                    # .jsonl ファイルの一覧（mtime 降順）
+                                    html.Div("file list", style={"fontWeight": "bold", "marginTop": "10px"}),
+                                    # html.Div 内で動的に子要素を差し替える。子要素には id={"type":"jsonl-item",...} のDivを入れる。
+                                    html.Div(id="file-list", style={"marginTop": "4px", "fontSize": "14px"}),
+                                ]),
+                                html.Div([
+                                    # run_end から抽出した run_id 一覧（time 新しい順）
+                                    html.Div("run id list", style={"fontWeight": "bold", "marginTop": "10px"}),
+                                    html.Div(id="runid-list", style={"marginTop": "4px", "fontSize": "14px"}),
+                                ]),
+                            ],
+                        ),
+                    ]
+                ),
+                # 右カラム: グラフ＋ファイル内容
+                html.Div(
+                    style={
+                        "flex": "1",
+                        "backgroundColor": "#1a1a1a",
+                        "padding": "10px",
+                        "border": "1px solid #333",
+                        "borderRadius": "6px",
+                    },
+                    children=[
+                        # dcc.Graph: Plotly図を描画するコンポーネント。figureはPlotlyのFigureを渡す。
+                        dcc.Graph(
+                            id="detail-graph",
+                            style={"height": "340px", "margin": "0"},
+                            figure=build_fig(),
+                        ),
+                        # ファイル内容（run_id 選択時はフィルタリング）
+                        html.Div("ファイル内容", style={"fontWeight": "bold", "marginTop": "10px"}),
+                        dcc.Textarea(
+                            id="file-content",
+                            style={
+                                "width": "100%",
+                                "height": "300px",
+                                "whiteSpace": "pre",
+                                "backgroundColor": "#111",
+                                "color": "#eee",
+                                "border": "1px solid #333",
+                            },
+                            readOnly=True,
+                        ),
+                    ]
+                ),
+            ]
+        )
+    ])
 
 
 # 3) パス直下のファイル一覧を表示する callback
