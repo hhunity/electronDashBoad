@@ -132,7 +132,7 @@ app.layout = html.Div([
                                 # dcc.Input: ユーザーがテキストを入力するフィールド（valueがコールバックの入力に使われる）
                                 dcc.Input(
                                     id="text",
-                                    value="./logs",
+                                    value="./python/logs",
                                     type="text",
                                     style={
                                         "padding": "4px",
@@ -427,13 +427,21 @@ def select_run_id(n_clicks, _version, current_selected, selected_file):
     run_times = load_run_times(selected_file)
 
     # クリック時の処理
+    clicked_rid = None
     if isinstance(triggered_id, dict):
-        rid = triggered_id.get("runid")
-        if not rid:
-            return dash.no_update, dash.no_update
-        if rid == current_selected:
+        clicked_rid = triggered_id.get("runid")
+    elif isinstance(triggered_id, str):
+        try:
+            parsed = json.loads(triggered_id)
+            if isinstance(parsed, dict):
+                clicked_rid = parsed.get("runid")
+        except Exception:
+            clicked_rid = None
+
+    if clicked_rid:
+        if clicked_rid == current_selected:
             return None, None  # トグル解除
-        return rid, run_times.get(rid)
+        return clicked_rid, run_times.get(clicked_rid)
 
     # 自動更新（selected-file-version）の場合
     if not run_times:
