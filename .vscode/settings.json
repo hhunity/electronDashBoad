@@ -1,0 +1,17 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/python/venv/bin/python3",
+    "python.venvPath": "${workspaceFolder}/python/venv",
+    "terminal.integrated.profiles.osx": {
+        "zsh (with venv)": {
+            "path": "zsh",
+            "args": [
+                "-i",
+                "-c",
+                "source ${workspaceFolder}/python/venv/bin/activate; exec zsh -i"
+            ]
+        }
+    },
+    "terminal.integrated.defaultProfile.osx": "zsh (with venv)",
+    "terminal.integrated.inheritEnv": true,
+    "python.terminal.activateEnvironment": true
+}

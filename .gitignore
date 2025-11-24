@@ -1,0 +1,5 @@
+node_modules/
+dist/
+build/
+electron/node_modules/
+electron/dist/
