@@ -1,0 +1,7 @@
+/* Reset default body padding/margin to remove outer whitespace */
+html, body, #react-entry-point, #_dash-app-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #111 !important;
+  min-height: 100vh;
+}

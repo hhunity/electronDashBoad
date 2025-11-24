@@ -65,6 +65,16 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
 import dash_bootstrap_components as dbc
 from dash import html, dcc
 
+# グローバルストア類
+stores = [
+    dcc.Store(id="selected-file"),
+    dcc.Store(id="selected-run-id"),
+    dcc.Store(id="selected-run-id-time"),
+    dcc.Store(id="selected-file-version", data={"version": 0, "mtime": None}),
+    dcc.Store(id="sidebar-collapsed", data=False),
+    dcc.Interval(id="auto-refresh-interval", interval=2000, disabled=True),
+]
+
 # ▼ もとのサイドバー中身を3つに分解 ▼
 
 # --- 上段（トグルボタン） ---
@@ -109,7 +119,8 @@ sidebar_middle = dbc.Row(
         )
     ],
     style={"height": "50vh", "overflowY": "auto"},
-    className='bg-secondary text-white'
+    className='bg-secondary text-white',
+    id="sidebar-content"
 )
 
 # --- 下段（run_id list） ---
@@ -133,71 +144,52 @@ sidebar = html.Div(
         sidebar_middle,
         sidebar_bottom,
     ],
+    id="sidebar",
+    className='bg-secondary text-white'
 )
 
-# sidebar = html.Div(
-#     [
-#         dbc.Row(
-#             [
-                
-#                 ],
-#             style={"height": "5vh"}, className='bg-primary text-white'
-#             ),
-#         dbc.Row(
-#             [
-#                 ],
-#             style={"height": "50vh"}, className='bg-secondary text-white'
-#             ),
-#         dbc.Row(
-#             [
-#                 ],
-#             style={"height": "45vh"}, className='bg-dark text-white'
-#             )
-#     ],
-# )
 content = html.Div(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.P('Distribution of Categorical Variable'),
-                        ],
-                    className='bg-white'
-                    ),
-                dbc.Col(
-                    [
-                        html.P('Distribution of Continuous Variable')
-                    ],
-                    className='bg-dark text-white'
-                    )
-            ],
-            style={"height": "50vh"}),
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.P('Correlation Matrix Heatmap')
-                    ],
-                    className='bg-light'
-                    )
-            ],
-            style={"height": "50vh"}
-            )
-        ]
-    )
+    style={
+        "backgroundColor": "#1a1a1a",
+        "padding": "10px",
+        "boxSizing": "border-box",
+        "minHeight": "100vh",
+    },
+    children=[
+        dcc.Graph(
+            id="detail-graph",
+            style={"height": "340px", "margin": "0"},
+            figure=build_fig(),
+        ),
+        html.Div("ファイル内容", style={"fontWeight": "bold", "marginTop": "10px"}),
+        dcc.Textarea(
+            id="file-content",
+            style={
+                "width": "100%",
+                "height": "300px",
+                "whiteSpace": "pre",
+                "backgroundColor": "#111",
+                "color": "#eee",
+                "border": "1px solid #333",
+            },
+            readOnly=True,
+        ),
+    ],
+)
 
 # ======================================================
 # layout = 画面に「何をどう配置するか」を定義する部分
 # ======================================================
 app.layout = dbc.Container(
     [
+        *stores,
         dbc.Row(
             [
-                dbc.Col(sidebar, width=3, className='bg-light'),
+                dbc.Col(sidebar, width=3),
                 dbc.Col(content, width=9)
                 ],
-            style={"height": "100vh"}
+            style={"height": "100vh"},
+            className='bg-secondary text-white'
             ),
         ],
     fluid=True
@@ -380,11 +372,11 @@ def show_files(path, selected_path):
             style={
                 "padding": "6px",
                 "border": "1px solid #333",
-                "marginBottom": "4px",
+                # "marginBottom": "4px",
                 "cursor": "pointer",
-                "borderRadius": "4px",
-                "backgroundColor": "#2f6eff" if os.path.join(abs_path, e) == selected_path else "#181818",
-                "color": "#fff" if os.path.join(abs_path, e) == selected_path else "#eee",
+                # "borderRadius": "4px",
+                # "backgroundColor": "#2f6eff" if os.path.join(abs_path, e) == selected_path else "#181818",
+                # "color": "#fff" if os.path.join(abs_path, e) == selected_path else "#eee",
             }
         )
         for e in entries
@@ -701,4 +693,4 @@ if __name__ == "__main__":
     app.run(
         host="127.0.0.1",
         port=8050,
-        debug=False)
+        debug=True)
