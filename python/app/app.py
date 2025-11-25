@@ -5,7 +5,7 @@ from dash import html, dcc, Input, Output, State  # html: HTMLタグ, dcc: Dash 
 import plotly.graph_objs as go
 from datetime import datetime
 import dash_bootstrap_components as dbc
-
+from components.sidebar import Sidebar
 
 def build_fig(xs=None, ys=None, title=None):
     """Build a scatter-only figure with consistent dark styling."""
@@ -149,33 +149,84 @@ sidebar = html.Div(
 )
 
 content = html.Div(
-    style={
-        "backgroundColor": "#1a1a1a",
-        "padding": "10px",
-        "boxSizing": "border-box",
-        "minHeight": "100vh",
-    },
-    children=[
-        dcc.Graph(
-            id="detail-graph",
-            style={"height": "340px", "margin": "0"},
-            figure=build_fig(),
-        ),
-        html.Div("ファイル内容", style={"fontWeight": "bold", "marginTop": "10px"}),
-        dcc.Textarea(
-            id="file-content",
-            style={
-                "width": "100%",
-                "height": "300px",
-                "whiteSpace": "pre",
-                "backgroundColor": "#111",
-                "color": "#eee",
-                "border": "1px solid #333",
-            },
-            readOnly=True,
-        ),
-    ],
-)
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.P('Distribution of Categorical Variable'),
+                        dcc.Graph(
+                            id="detail-graph",
+                            style={"height": "340px", "margin": "0"},
+                            figure=build_fig(),
+                        ),
+                        ],
+                    # className='bg-white'
+                    className='bg-dark text-white'
+                    ),
+                dbc.Col(
+                    [
+                        html.P('Distribution of Continuous Variable')
+                    ],
+                    className='bg-dark text-white'
+                    )
+            ],
+            style={"height": "50vh"}),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.P('Correlation Matrix Heatmap'),
+                        html.Div("ファイル内容", style={"fontWeight": "bold", "marginTop": "10px"}),
+                        dcc.Textarea(
+                            id="file-content",
+                            style={
+                                "width": "100%",
+                                "height": "300px",
+                                "whiteSpace": "pre",
+                                "backgroundColor": "#111",
+                                "color": "#eee",
+                                "border": "1px solid #333",
+                            },
+                            readOnly=True,
+                        ),
+                    ],
+                    className='bg-light'
+                    )
+            ],
+            style={"height": "50vh"}
+            )
+        ]
+    )
+
+# content = html.Div(
+#     style={
+#         "backgroundColor": "#1a1a1a",
+#         "padding": "10px",
+#         "boxSizing": "border-box",
+#         "minHeight": "100vh",
+#     },
+#     children=[
+#         dcc.Graph(
+#             id="detail-graph",
+#             style={"height": "340px", "margin": "0"},
+#             figure=build_fig(),
+#         ),
+#         html.Div("ファイル内容", style={"fontWeight": "bold", "marginTop": "10px"}),
+#         dcc.Textarea(
+#             id="file-content",
+#             style={
+#                 "width": "100%",
+#                 "height": "300px",
+#                 "whiteSpace": "pre",
+#                 "backgroundColor": "#111",
+#                 "color": "#eee",
+#                 "border": "1px solid #333",
+#             },
+#             readOnly=True,
+#         ),
+#     ],
+# )
 
 # ======================================================
 # layout = 画面に「何をどう配置するか」を定義する部分
@@ -185,14 +236,16 @@ app.layout = dbc.Container(
         *stores,
         dbc.Row(
             [
-                dbc.Col(sidebar, width=3),
-                dbc.Col(content, width=9)
+                dbc.Col(sidebar, width=3, className="p-0"),
+                dbc.Col(content, width=9, className="p-0")
                 ],
-            style={"height": "100vh"},
-            className='bg-secondary text-white'
+            style={"height": "100vh", "margin": "0"},
+            className='g-0 bg-secondary text-white'
             ),
         ],
-    fluid=True
+    fluid=True,
+    className="p-0",
+    style={"padding": "0", "margin": "0"}
     )
 
 if 0:
