@@ -1,4 +1,9 @@
 const { app, BrowserWindow } = require("electron");
+
+// ★ 1. BrowserWindow より前に必ず置く！！
+app.commandLine.appendSwitch("force-device-scale-factor", "1");
+app.commandLine.appendSwitch("high-dpi-support", "1");
+
 const { spawn } = require("child_process");
 const path = require("path");
 const http = require("http");
@@ -80,12 +85,15 @@ async function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    webPreferences: {
+      zoomFactor: 1.0,   // ここは念のため
+    }
   });
   // 起動時に最大化して全画面サイズで表示
   mainWindow.maximize();
 
   // Electron だとデフォルトズームが効いて文字が大きく見える場合があるので固定する
-  mainWindow.webContents.setZoomFactor(1);
+  // mainWindow.webContents.setZoomFactor(1);
   // mainWindow.webContents.setVisualZoomLevelLimits(1, 1);
   // setLayoutZoomLevelLimits は環境によって真っ白になることがあるので使用しない
   mainWindow.webContents.on("did-finish-load", () => {
