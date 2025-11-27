@@ -28,7 +28,10 @@ def show_files(path,selected_path): #selected_path
         candidates = [e for e in os.listdir(abs_path) if e.endswith(".jsonl")]
         entries = sorted(
             candidates,
-            key=lambda name: os.path.getmtime(os.path.join(abs_path, name)),
+            key=lambda name: (
+                os.path.getmtime(os.path.join(abs_path, name)),
+                name,
+            ),
             reverse=True,
         )
     except Exception as e:
