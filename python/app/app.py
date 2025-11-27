@@ -8,7 +8,7 @@ import dash_bootstrap_components as dbc
 import components.sidebar as sidebar
 import components.contents as contents
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
 
 from callbacks import get_files_callbacks
 from callbacks import get_runid_callbacks

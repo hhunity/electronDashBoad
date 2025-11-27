@@ -7,7 +7,7 @@ def build_fig(xs=None, ys=None, title=None):
     fig = go.Figure()
     fig.update_layout(
         height=300,
-        margin=dict(l=5, r=5, t=5, b=5),
+        margin=dict(l=40, r=40, t=20, b=20),
         title=title or None,
         #template="ggplot2",#plotly_dark
         #paper_bgcolor="#1a1a1a",#グラフ全体（外側の紙）の背景色。
@@ -20,9 +20,17 @@ def build_fig(xs=None, ys=None, title=None):
     return fig
 
 def make_graph(id_prefix):
-    return  dcc.Graph(id={"type": "detail-graph", "prefix": id_prefix},
+    return  html.Div(
+        [
+            dbc.Label("graph"),
+            dcc.Graph(id={"type": "detail-graph", "prefix": id_prefix},
                     style={"height": "340px", "margin": "0"},
                     figure=build_fig())
+        ],
+        style={"height": "100%"},
+        )
+
+
 
 
 

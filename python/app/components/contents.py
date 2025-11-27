@@ -3,13 +3,14 @@ import dash_bootstrap_components as dbc
 import components.graph as graph
 import components.textline as textline
 import components.runid_list as runcode
+import components.toggle_button as toggle
 
 def make_contents(id_prefix):
     return html.Div(
         [
                 dcc.Store(id={"type":"selected-file", "prefix": id_prefix}),
                 dcc.Store(id={"type":"selected-run-id", "prefix": id_prefix}),
-
+                
                 dbc.NavbarSimple(
                     brand="NavbarSimple",
                     brand_href="#",
@@ -18,14 +19,14 @@ def make_contents(id_prefix):
                 ),
                 dbc.Row([
                     dbc.Col(
-                        runcode.make_runcode_list(id_prefix),width=2),
+                        runcode.make_runcode_list(id_prefix),width=2,className="p-2"),
                     dbc.Col(
-                        graph.make_graph(id_prefix),width=5),
+                        graph.make_graph(id_prefix),width=5,className="p-2"),
                     dbc.Col(
-                        textline.make_textline(id_prefix),width=5),
+                        textline.make_textline(id_prefix),width=5,className="p-2"),
                         ],
                     # className='bg-light',
-                    className='g-0',
+                    # className='g-0',
                 ),
                 
         ],
