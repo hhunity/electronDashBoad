@@ -4,6 +4,7 @@ import dash_bootstrap_components as dbc
 import os
 import json
 import datetime
+import components.graph as graph
 
 @callback(
     Output({"type":"selected-run-id", "prefix": MATCH}, "data"),
@@ -40,3 +41,28 @@ def select_run_id(n_clicks):#, _version, current_selected, selected_file
         # if clicked_rid == current_selected:
         #     return None, None  # トグル解除
         return clicked_rid
+
+@callback(
+    Output({"type": "detail-graph", "prefix": MATCH}, "figure"),
+    Input({"type": "file-raw", "prefix": MATCH}, "data"),
+    Input({"type": "selected-run-id", "prefix": MATCH}, "data"),
+)
+def update_graph(raw_lines, run_id):
+    if not raw_lines:
+        return graph.build_fig()
+
+    xs = []
+    ys = []
+
+    for line in raw_lines:
+        try:
+            obj = json.loads(line)
+        except:
+            continue
+
+        if run_id is None or obj.get("run_id") == run_id:
+            if "frame_id" in obj and "elapsed_ms" in obj:
+                xs.append(obj["frame_id"])
+                ys.append(obj["elapsed_ms"])
+
+    return graph.build_fig(xs, ys)

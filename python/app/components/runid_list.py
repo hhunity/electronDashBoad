@@ -13,12 +13,12 @@ def make_runcode_list(id_prefix):
                     # .jsonl ファイルの一覧（mtime 降順）
                     dbc.Label("file list", html_for=f"{id_prefix}-filelist"),
                     # html.Div 内で動的に子要素を差し替える。子要素には id={"type":"jsonl-item",...} のDivを入れる。
-                    dbc.ListGroup(id={"type":"file-list", "prefix": id_prefix}, style={"marginTop": "4px", "fontSize": "14px"}),
+                    dbc.ListGroup(id={"type":"file-list", "prefix": id_prefix}),
                 ]),
                 html.Div([
                     # run_end から抽出した run_id 一覧（time 新しい順）
                     dbc.Label("run id list", html_for=f"{id_prefix}-runidlist"),
-                    dbc.ListGroup(id={"type":"runid-list", "prefix": id_prefix}, style={"marginTop": "4px", "fontSize": "14px"}),
+                    dbc.ListGroup(id={"type":"runid-list", "prefix": id_prefix}),
                 ]),
             ],
             )

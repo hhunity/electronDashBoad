@@ -1,4 +1,4 @@
-from dash import callback, Output, Input, html, MATCH
+from dash import callback, Output, Input, html, MATCH, State
 import dash
 import dash_bootstrap_components as dbc
 import os
@@ -50,21 +50,6 @@ def show_files(path,selected_path): #selected_path
                     break
     
     return [
-        # html.Div(
-        #     e,
-        #     id={"type": "jsonl-item", "path": os.path.join(abs_path, e)},
-        #     n_clicks=0,
-        #     # style={
-        #     #     "padding": "6px",
-        #     #     "border": "1px solid #333",
-        #     #     "marginBottom": "4px",
-        #     #     "cursor": "pointer",
-        #     #     "borderRadius": "4px",
-        #     #     "backgroundColor": "#2f6eff" if os.path.join(abs_path, e) == selected_path else "#181818",
-        #     #     "color": "#fff" if os.path.join(abs_path, e) == selected_path else "#eee",
-        #     # }
-        # )
-        # for e in entries
         dbc.ListGroupItem(
             e,
             id={"type": "jsonl-item","prefix": prefix,"path": os.path.join(abs_path, e)},

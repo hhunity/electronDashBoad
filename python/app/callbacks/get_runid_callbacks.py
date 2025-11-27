@@ -80,33 +80,7 @@ def update_runid_list(selected_path,selected_run_id):
         if isinstance(item.get("id"), dict) and "prefix" in item["id"]:
             prefix = item["id"]["prefix"]
             break
-    # if ctx.triggered_id and isinstance(ctx.triggered_id, dict):
-    #     prefix = ctx.triggered_id.get("prefix")
-    # if prefix is None:
-    #     # fallback: pick prefix from first input if available
-    #     for item in getattr(ctx, "inputs_list", []):
-    #         if isinstance(item.get("id"), dict):
-    #             prefix = item["id"].get("prefix")
-    #             if prefix is not None:
-    #                 break
-
     return [
-        # html.Div(
-        #     rid,
-        #     id={"type": "runid-item", "runid": rid},
-        #     n_clicks=0,
-        #     style={
-        #         "padding": "6px",
-        #         "border": "1px solid #333",
-        #         "marginBottom": "4px",
-        #         "cursor": "pointer",
-        #         "borderRadius": "4px",
-        #         # "backgroundColor": "#2f6eff" if rid == selected_run_id else "#181818",
-        #         # "color": "#fff" if rid == selected_run_id else "#eee",
-        #     },
-        # )
-        # for rid in sorted_run_ids
-
         dbc.ListGroupItem(
             rid,
             id={"type": "runid-item","prefix": prefix,"runid": rid},

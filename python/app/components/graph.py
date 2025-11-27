@@ -20,6 +20,9 @@ def build_fig(xs=None, ys=None, title=None):
     return fig
 
 def make_graph(id_prefix):
-    return dcc.Graph(id=f"{id_prefix}-graph",
+    return  dcc.Graph(id={"type": "detail-graph", "prefix": id_prefix},
                     style={"height": "340px", "margin": "0"},
-                    figure=build_fig()),
+                    figure=build_fig())
+
+
+
